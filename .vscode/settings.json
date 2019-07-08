@@ -1,0 +1,27 @@
+{
+    "python.pythonPath": "C:\\Anaconda\\python.exe",
+    "python.condaPath": "C:\\Anaconda\\python.exe",
+    "editor.fontSize": 18,
+    "editor.tabCompletion": "on",
+    //"python.linting.enabled": false,
+    "python.linting.pep8Enabled": true,
+    "python.linting.pep8Path": "C:/Users/Girish/AppData/Roaming/Python/Python37/Scripts/autopep8.exe",   //https://github.com/hhatto/autopep8
+    "python.linting.pep8Args": ["--max-line-length=120","--ignore=E501"],
+    "python.autoComplete.addBrackets": true,
+    //"python.linting.pylintEnabled": false,
+    "files.autoSave":"afterDelay",
+    "editor.autoClosingBrackets": "always",
+    "editor.autoClosingQuotes": "always",
+    "editor.autoIndent": true,
+    "editor.cursorBlinking":"blink",
+    "editor.defaultFormatter":"ms-python.python",    
+    "editor.formatOnSave": true,
+    "python.formatting.provider": "autopep8",
+    "python.formatting.autopep8Path": "C:/Users/Girish/AppData/Roaming/Python/Python37/Scripts/autopep8.exe",
+    "python.dataScience.jupyterServerURI": "local"
+
+    
+
+
+}
+
