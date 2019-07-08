@@ -100,22 +100,22 @@ if __name__ == '__main__':
     directory = Get_md5_from_directory()
     if directory:
         for key, value in directory.items():
-            
-            if db.get(key) == value:
-                print("No change in {} having signature{}".format(key, value))
-            else:
-                filename = key.replace("Decrypted", "Encrypted")
-                os.makedirs(os.path.dirname(filename), exist_ok=True)
-                with open(key, 'rb') as fread:
-                    data = fread.read()
+            if "/Tools" not in key:
+                if db.get(key) == value:
+                    print("No change in {} having signature{}".format(key, value))
+                else:
+                    filename = key.replace("Decrypted", "Encrypted")
+                    os.makedirs(os.path.dirname(filename), exist_ok=True)
+                    with open(key, 'rb') as fread:
+                        data = fread.read()
 
-                fernet = Fernet(environ['k'].encode("utf-8"))
-                encrypted = fernet.encrypt(data)
+                    fernet = Fernet(environ['k'].encode("utf-8"))
+                    encrypted = fernet.encrypt(data)
 
-                with open(filename, 'wb') as fread:
-                    fread.write(encrypted)
-        if not (os.path.exists(path + '/Encrypted')):
-            os.makedirs(os.path.dirname(path + '/Encrypted'), exist_ok=True)
+                    with open(filename, 'wb') as fread:
+                        fread.write(encrypted)
+            if not (os.path.exists(path + '/Encrypted')):
+                os.makedirs(os.path.dirname(path + '/Encrypted'), exist_ok=True)
 
         Syncdir()
         GitAdd()
