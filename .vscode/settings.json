@@ -1,6 +1,6 @@
 {
-    "python.pythonPath": "C:\\Anaconda\\python.exe",
-    "python.condaPath": "C:\\Anaconda\\python.exe",
+    "python.pythonPath": "C:\\Users\\Girish\\AppData\\Local\\Programs\\Python\\Python36\\python.exe",
+    "python.condaPath": "C:\\Users\\Girish\\AppData\\Local\\Programs\\Python\\Python36\\python.exe",
     "editor.fontSize": 18,
     "editor.tabCompletion": "on",
     //"python.linting.enabled": false,
