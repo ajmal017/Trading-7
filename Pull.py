@@ -11,9 +11,9 @@ if os.name == 'nt':
     subprocess.run("git pull origin master")
 else:
     from subprocess import call
-    path = "/Volume/GirishMacDrive/Trading/"
-    print("Pulling from  Github")
-    call("git pull origin master")
+    path = "/Volumes/GirishMacDrive/Trading/"
+    print("Clone repo and Run this program\n")       
+
 
 files = []
 [files.append(os.path.join(r, file))
