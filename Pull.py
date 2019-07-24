@@ -5,9 +5,15 @@ import subprocess
 import os
 key = environ['k'].encode("utf-8")
 
-path = "C:/Trading"
-print("Pulling from  Github")
-subprocess.run("git pull origin master")
+if os.name == 'nt':
+    path = "C:/Trading"
+    print("Pulling from  Github")
+    subprocess.run("git pull origin master")
+else:
+    from subprocess import call
+    path = "/Volume/GirishMacDrive/Trading/"
+    print("Pulling from  Github")
+    call("git pull origin master")
 
 files = []
 [files.append(os.path.join(r, file))
