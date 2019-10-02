@@ -8,7 +8,7 @@ from datetime import datetime
 import pickle
 import pandas as pd
 import hashlib
-path = "G:\\Trading"
+path = "C:\\Trading"
 
   
 def GitAdd():

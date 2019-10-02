@@ -6,7 +6,7 @@ import os
 key = environ['k'].encode("utf-8")
 
 if os.name == 'nt':
-    path = "G:\\Trading"
+    path = "C:\\Trading"
     print("Pulling from  Github")
     subprocess.run("git pull origin master")
 else:
