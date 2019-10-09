@@ -5,9 +5,9 @@
     "editor.fontSize": 18,
     "editor.tabCompletion": "on",
     //"python.linting.enabled": false,
-    "python.linting.pep8Enabled": true,
-    "python.linting.pep8Path": "C:/Users/Girish/AppData/Roaming/Python/Python37/Scripts/autopep8.exe",   //https://github.com/hhatto/autopep8
-    "python.linting.pep8Args": ["--max-line-length=120","--ignore=E501"],
+    "python.linting.pycodestyleEnabled": true,
+    "python.linting.pycodestylePath": "C:/Users/Girish/AppData/Roaming/Python/Python37/Scripts/autopep8.exe",   //https://github.com/hhatto/autopep8
+    "python.linting.pycodestyleArgs": ["--max-line-length=120","--ignore=E501"],
     "python.autoComplete.addBrackets": true,
     //"python.linting.pylintEnabled": false,
     "files.autoSave":"afterDelay",
