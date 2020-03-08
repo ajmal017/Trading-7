@@ -1,0 +1,205 @@
+
+//
+//@version=4
+study("Divergence for many indicator v3", overlay=true, max_bars_back = 4000)
+lb = input(5, title="Left Bars", minval=1)
+rb = input(5, title="Right Bars", minval=1)
+shownum = input(true, title="Show Divergence Number")
+showindis = input(false, title="Show Indicator Names")
+showpivot = input(false, title="Show Pivot Points")
+showlimit = input(1, title="Minimum Number of Divergence", minval = 1, maxval = 11)
+chwidth = input(true, title = "Change Width by Number of Divergence")
+calcmacd = input(true, title="MACD")
+calcmacda = input(true, title="MACD Histogram")
+calcrsi = input(true, title="RSI")
+calcstoc = input(true, title="Stochastic")
+calccci = input(true, title="CCI")
+calcmom = input(true, title="Momentum")
+calcobv = input(true, title="OBV")
+calcdi = input(true, title="Diosc")
+calcvwmacd = input(true, title="VWmacd")
+calccmf = input(true, title="Chaikin Money Flow")
+calcmfi = input(true, title="Money Flow Index")
+
+// RSI
+rsi = rsi(close, 14)
+// MACD
+[macd, signal, deltamacd] = macd(close, 12, 26, 9)
+// Momentum
+moment = mom(close, 10)
+// CCI
+cci = cci(close, 10)
+// OBV
+
+Obv = obv // cum(change(close) > 0 ? volume : change(close) < 0 ? -volume : 0 * volume)
+// Stoch
+stk = sma(stoch(close, high, low, 14), 3)
+// DIOSC
+DI = change(high) - (-change(low))
+trur = rma(tr, 14)
+diosc = fixnan(100 * rma(DI, 14) / trur)
+// volume weighted macd
+maFast = vwma(close, 12)
+maSlow = vwma(close, 26)
+vwmacd = maFast - maSlow
+// Chaikin money flow
+Cmfm = ((close-low) - (high-close)) / (high - low)
+Cmfv = Cmfm * volume
+cmf = sma(Cmfv, 21) / sma(volume,21)
+// Moneyt Flow Index
+Mfi = mfi(close, 14)
+
+float top = na
+float bot = na
+top := pivothigh(lb, rb)
+bot := pivotlow(lb, rb)
+
+plotshape(top and showpivot, text="[PH]",  style=shape.labeldown, color=color.white, textcolor=color.black, location=location.abovebar, transp=0, offset = -rb)
+plotshape(bot and showpivot, text="[PL]",  style=shape.labeldown, color=color.white, textcolor=color.black, location=location.belowbar, transp=0, offset = -rb)
+
+topc = 0, botc = 0
+topc := top ? lb : nz(topc[1]) + 1
+botc := bot ? lb : nz(botc[1]) + 1
+
+// Negative Divergence (checking possible higher highs(lb=0))
+newtop = pivothigh(lb, 0) // check only left side
+emptyh = true
+if not na(newtop) and newtop > high[topc]   // there must not close price higher than the line between last PH and current high
+    diff = (newtop - high[topc]) / topc
+    hline = newtop - diff                   // virtual line to check there is no close price higher than it
+    for x = 1 to topc -1
+        if close[x] > hline
+            emptyh := false
+            break
+        hline := hline - diff
+else
+    emptyh := false
+    
+negdivergence = 0
+negdivtxt = ""
+if emptyh and not na(newtop)
+    if calcrsi and rsi[topc] > rsi
+        negdivergence := negdivergence + 1
+        negdivtxt := "RSI\n"
+    if calcmacd and macd[topc] > macd
+        negdivergence := negdivergence + 1
+        negdivtxt := negdivtxt + "MACD\n"
+    if calcmacda and deltamacd[topc] > deltamacd
+        negdivergence := negdivergence + 1
+        negdivtxt := negdivtxt + "MACD Hist\n"
+    if calcmom and moment[topc] > moment
+        negdivergence := negdivergence + 1
+        negdivtxt := negdivtxt + "Momentum\n"
+    if calccci and cci[topc] > cci
+        negdivergence := negdivergence + 1
+        negdivtxt := negdivtxt + "CCI\n"
+    if calcobv and Obv[topc] > Obv
+        negdivergence := negdivergence + 1
+        negdivtxt := negdivtxt + "OBV\n"
+    if calcstoc and stk[topc] > stk
+        negdivergence := negdivergence + 1
+        negdivtxt := negdivtxt + "Stoch\n"
+    if calcdi and diosc[topc] > diosc
+        negdivergence := negdivergence + 1
+        negdivtxt := negdivtxt + "Diosc\n"
+    if calcvwmacd and vwmacd[topc] > vwmacd
+        negdivergence := negdivergence + 1
+        negdivtxt := negdivtxt + "VWMacd\n"
+    if calccmf and cmf[topc] > cmf 
+        negdivergence := negdivergence + 1
+        negdivtxt := negdivtxt + "CMF\n"
+    if calcmfi and Mfi[topc] > Mfi 
+        negdivergence := negdivergence + 1
+        negdivtxt := negdivtxt + "MFI\n"
+    
+newareah = false
+newareah := top ? false : nz(newareah[1], false)
+if negdivergence >= showlimit
+    var line divlh = na
+    var label labh = na
+    if newareah                             // we remove old line until It reaches new pivot point (like animation ;)
+        line.delete(divlh)
+        label.delete(labh)
+    newwd = not chwidth ? 2 :
+       negdivergence <= 2 ? 2 :
+       negdivergence <= 5 ? 3 :
+       negdivergence <= 8 ? 4 : 5
+    divlh := line.new(bar_index - topc, high[topc], bar_index, high, color = color.red, width = newwd)
+    if shownum or showindis
+        txt = showindis ? negdivtxt : ""
+        txt := txt + (shownum ? tostring(negdivergence) : "")
+        labh := label.new(bar_index, na, text=txt, color= color.red, textcolor = color.white, style=label.style_labeldown, yloc=yloc.abovebar)
+    newareah := true 
+
+// Positive Divergence (checking possible Lower lows(lb=0))
+newbot = pivotlow(lb, 0) // check only left side
+emptyl = true
+if not na(newbot) and newbot < low[botc]    // there must not close price lower than the line between last PL and current low
+    diff = (newbot - low[botc]) / botc
+    lline = newbot - diff                   // virtual line to check there is no close price lower than it
+    for x = 1 to botc -1
+        if close[x] < lline
+            emptyl := false
+            break
+        lline := lline - diff
+else
+    emptyl := false
+    
+posdivergence = 0
+posdivtxt = ""
+if emptyl and not na(newbot)
+    if calcrsi and rsi[botc] < rsi
+        posdivergence := 1
+        posdivtxt := "RSI\n"
+    if calcmacd and macd[botc] < macd
+        posdivergence := posdivergence + 1
+        posdivtxt := posdivtxt + "MACD\n"
+    if calcmacda and deltamacd[botc] < deltamacd
+        posdivergence := posdivergence + 1
+        posdivtxt := posdivtxt + "MACD Hist\n"
+    if calcmom and moment[botc] < moment
+        posdivergence := posdivergence + 1
+        posdivtxt := posdivtxt + "Momentum\n"
+    if calccci and cci[botc] < cci
+        posdivergence := posdivergence + 1
+        posdivtxt := posdivtxt + "CCI\n"
+    if calcobv and Obv[botc] < Obv
+        posdivergence := posdivergence + 1
+        posdivtxt := posdivtxt + "OBV\n"
+    if calcstoc and stk[botc] < stk
+        posdivergence := posdivergence + 1
+        posdivtxt := posdivtxt + "Stoch\n"
+    if calcdi and diosc[botc] < diosc
+        posdivergence := posdivergence + 1
+        posdivtxt := posdivtxt + "Diosc\n"
+    if calcvwmacd and vwmacd[botc] < vwmacd
+        posdivergence := posdivergence + 1
+        posdivtxt := posdivtxt + "VWMacd\n"
+    if calccmf and cmf[botc] < cmf 
+        posdivergence := posdivergence + 1
+        posdivtxt := posdivtxt + "CMF\n"
+    if calcmfi and Mfi[botc] < Mfi
+        posdivergence := posdivergence + 1
+        posdivtxt := posdivtxt + "MFI\n"
+        
+newareal = false
+newareal := bot ? false : nz(newareal[1], false)
+if posdivergence >= showlimit
+    var line divl = na
+    var label lab = na
+    if newareal                             // we remove old line until It reaches new pivot point (like animation ;)
+        line.delete(divl)
+        label.delete(lab)
+    newwd = not chwidth ? 2 :
+       posdivergence <= 2 ? 2 :
+       posdivergence <= 5 ? 3 :
+       posdivergence <= 8 ? 4 : 5
+    divl := line.new(bar_index - botc, low[botc], bar_index, low, color = color.lime, width = newwd)
+    if shownum or showindis
+        txt = showindis ? posdivtxt : ""
+        txt := txt + (shownum ? tostring(posdivergence) : "")
+        lab := label.new(bar_index, na, text=txt, color= color.lime, textcolor = color.black, style=label.style_labelup, yloc=yloc.belowbar)
+    newareal := true
+
+alertcondition(posdivergence >= showlimit, title='Positive Divergence', message='Positive Divergence')
+alertcondition(negdivergence >= showlimit, title='Negative Divergence', message='Negative Divergence')
