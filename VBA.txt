@@ -1,0 +1,34 @@
+Private Sub CommandButton1_Click()
+
+Dim password As Variant
+password = Application.InputBox("Enter Password", "Password Protected")
+
+Select Case password
+    Case Is = False
+        'do nothing
+    Case Is = "easy"
+        MsgBox "Username" & vbNewLine & "Password"
+    Case Else
+        MsgBox "Incorrect Password"
+End Select
+
+
+End Sub
+
+
+
+Sub Macro1()
+    With ActiveSheet.Shapes("Rounded Rectangle 4").TextFrame2.TextRange.Characters
+        If .Text = "Hide" Then
+            .Text = "Show"
+            ActiveSheet.Shapes("Picture 2").Visible = False
+        Else
+            .Text = "Hide"
+            With ActiveSheet.Shapes("Rounded Rectangle 4")
+            ActiveSheet.Shapes("Picture 2").Left = .Left + .Width
+            ActiveSheet.Shapes("Picture 2").Top = .Top + .Height
+            ActiveSheet.Shapes("Picture 2").Visible = True
+            End With
+        End If
+    End With
+End Sub
