@@ -9,6 +9,10 @@ pd.options.display.max_rows = 252
 pd.set_option('precision', 2)
 
 
+def fxy(x, y):
+    return ((x-y)*100)/y
+  
+
 stockhdata = await ib.reqHistoricalDataAsync(Stock('SPY', 'SMART', 'USD'), endDateTime='',
                                         durationStr='1 Y',
                                         barSizeSetting='1 day',
